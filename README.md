@@ -1,7 +1,7 @@
 # DBXN evolution — analysis code
 
 Code for the evolutionary analyses of vitellogenin-derived pigments (dibilinoxanthinins, DBXNs) in Lepidoptera and spiders.
-Data: [Zenodo DOI].
+Data: https://doi.org/10.5281/zenodo.23856169
 
 ## Environment
 
