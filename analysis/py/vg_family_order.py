@@ -1,16 +1,10 @@
 #!/usr/bin/env python3
-"""Genomic order of the Vg-family copies of every lepidopteran species, and whether each lies in the Vg locus (Fig. 8a).
+"""Genomic order of the Vg-family copies of each lepidopteran genome and their position in or outside the Vg locus.
 
-Copies: miniprot loci of class DBXN or Vg (intact copies take the gene-tree class, lep_classes_broad.tsv; loci that
-are not intact keep the miniprot class), as counted in revision/data/lep_species_copies_2026-10-10.tsv (checked).
-Vg locus: the chain of Vg-family copies on the contig of the canonical Vg (intact gene-tree Vg; the disrupted one if
-there is none) in which neighbouring copies are <= --gap bp apart (default 100 kb: all gaps between neighbouring
-Vg-family copies are <= 81 kb or >= 104 kb). Copies on other contigs or beyond a larger gap are outside the locus.
-Order: copies of the locus along the contig, oriented so that the canonical Vg is transcribed left to right
-(upstream = left), then the copies outside the locus (by contig and position).
-CBR similarity to MperDBXN for intact copies (analysis/data/cbr/cbr.lep_per_copy.tsv).
+Vg locus: the chain of copies on the contig of the canonical Vg with neighbours <= --gap bp apart (default 100 kb);
+oriented so that Vg is transcribed left to right.
 
-Usage (repository root): vg_family_order.py [--gap 100000]  -> analysis/results/lep_vgfamily_order.tsv
+Usage: vg_family_order.py [--gap 100000]  -> analysis/results/lep_vgfamily_order.tsv
 """
 import argparse
 import csv

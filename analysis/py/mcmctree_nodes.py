@@ -1,8 +1,7 @@
 #!/usr/bin/env python3
-"""Ages (posterior mean, 95% HPD; Ma) of named nodes from MCMCTree FigTree.tre files.
+"""Posterior mean ages and 95% HPD (Ma) of named nodes (MRCA of two species) from MCMCTree FigTree.tre files.
 
-Tips sp0001... are renamed with mapping_species.tsv (new_name -> tree_label). Nodes are defined as
-MRCA of two tree_labels. Usage: mcmctree_nodes.py --dir analysis/data/mcmctree/araneae --schemes A B1 C1
+Usage: mcmctree_nodes.py --dir analysis/data/mcmctree/araneae --schemes A B1 C1
 """
 import argparse
 import csv

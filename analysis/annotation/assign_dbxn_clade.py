@@ -1,20 +1,12 @@
 #!/usr/bin/env python3
-"""Final DBXN / Vg class of every copy from the gene tree (no CBR involved).
+"""DBXN / Vg class of every lepidopteran copy from the gene tree.
 
-Rule (plan §3.1): clades are defined relative to the outgroup Vg (other insect orders); the DBXN clade
-is the largest clade with UFBoot >= --min-support that contains MperDBXN and all RefSeq DBXN-like
-references and no Lepidoptera canonical Vg reference (--definition broad, default). The smallest such
-clade (--definition strict) is also reported: because every DBXN reference is from Noctuidae, it stops
-at the Noctuidae subclade by construction and must not be read as "DBXN only in Noctuidae".
-DBXN arose from Vg within Lepidoptera, so the canonical Vg are paraphyletic around it:
-copies inside the smallest clade holding all Lepidoptera canonical Vg references but outside
-the DBXN clade are Vg; anything else is 'unassigned' and is reported with its neighbours.
-If no clade satisfies the rule, the script says why (which canonical Vg sits inside, or
-which reference falls outside) instead of guessing.
+DBXN clade: the largest clade (UFBoot >= --min-support; rooted on the outgroup Vgs) with MperDBXN and all DBXN-like
+references and without canonical lepidopteran Vgs (--definition broad); --definition strict gives the smallest one.
+Other copies within the clade of the canonical lepidopteran Vgs are Vg; the rest are 'unassigned'.
 
 Usage: assign_dbxn_clade.py --tree lep.treefile --set lep_tree_set.tsv --out lep_classes
-IQ-TREE node labels 'SH-aLRT/UFBoot' or 'UFBoot' are both read.
-Outputs: <out>.tsv (per copy), <out>.summary.txt
+Outputs: <out>.tsv, <out>.summary.txt
 """
 import argparse
 import csv

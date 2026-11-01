@@ -1,16 +1,8 @@
 #!/usr/bin/env python3
-"""Where do the key Vg duplications sit on the species tree? (GeneRax reconciliations)
+"""Placement of the key Vg duplications and losses on the species tree, from GeneRax reconciliations.
 
-For a reconciled gene tree (GeneRax *_reconciliated.nhx: S = species node, D = Y/N) and the
-labelled species tree (species_trees/starting_species_tree.newick):
-  - for each gene group (e.g. the DBXN lineage), find its MRCA in the gene tree and the smallest
-    gene-tree node that also contains other genes (the split from its sister lineage);
-  - report event type and the species-tree node they map to, described by its leaf families;
-  - count duplications per species-tree node inside a group.
-
-Usage (Lepidoptera):
-  generax_summary.py --nhx lep_b_reconciliated.nhx --species-tree starting_species_tree.newick \
-      --classes lep_classes_broad.tsv --species-table lepidoptera_species_v2.tsv
+Usage: generax_summary.py --nhx lep_b_reconciliated.nhx --species-tree starting_species_tree.newick \
+           --classes lep_classes_broad.tsv --species-table lepidoptera_species_v2.tsv
 """
 import argparse
 import csv

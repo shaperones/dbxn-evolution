@@ -1,11 +1,7 @@
 #!/usr/bin/env Rscript
-# Analysis 4 of revision/05_association_methods.md: permulation test for the primary phyloglm (quadrifids,
-# green ~ intact DBXN copies) and the classification-free CBR predictor (copies of any class with CBR >= 70 %).
-# Null: a liability evolves by Brownian motion on the tree independently of the copy number; the species with the
-# highest liability get "green", as many as observed — keeps the phylogenetic clustering and the frequency of
-# green coloration (permulation for a binary trait; Saputra et al. 2021). The regression is refitted on every
-# simulated trait; empirical P = share of simulations with beta >= observed (one-sided, the hypothesis is beta > 0).
-# Trees: simulations cycle over the trees of the main set.
+# Phylogenetic permutation test for the primary model (green ~ intact DBXN copies) and for copies of any class with CCR
+# similarity >= 70%: coloration is simulated as a threshold trait (Brownian liability, observed number of green species)
+# independent of copy number; one-sided P = share of simulations with beta >= observed.
 #
 # Usage: association_permulation.R TREESETS.tsv OUT.tsv [NPERM=1000]
 suppressMessages({library(ape); library(phylolm)})

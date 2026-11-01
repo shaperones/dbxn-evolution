@@ -1,29 +1,11 @@
 #!/usr/bin/env python3
-"""Ancestral states of the chromophore-binding residues (CBRs) at key nodes of the Vg/DBXN gene trees.
+"""Ancestral states of the chromophore-contact residues (CCRs) at key nodes of the gene trees (IQ-TREE --ancestral).
 
-Question: are the CBRs that DBXN shares with Notodontidae Vg (but not with quadrifid Vg) ancestral for
-noctuoid Vg (kept in DBXN, lost in quadrifid Vg after the duplication), or derived in DBXN?
-Marginal reconstruction (IQ-TREE --ancestral) on a fixed topology; model as in the gene tree.
+Runs: lep_ml (ML gene tree) and lep_constr (DBXN constrained within the Vgs of Erebidae, Nolidae and Noctuidae), on the
+ClipKIT alignment; spider (midpoint-rooted gene tree), on the untrimmed MAFFT alignment, which keeps all MvirDBXN CCRs.
+Outputs in analysis/data/asr/<run>/: IQ-TREE files, <run>.cbr_nodes.tsv, <run>.summary.tsv, <run>.changes.tsv
 
-Runs (Lepidoptera on the alignment the trees were built from, columns after ClipKIT; spiders on the untrimmed MAFFT alignment):
-  lep_ml      614 genes (GeneRax / AU set), ML tree of the full-set AU test (ml614.treefile)
-  lep_constr  same genes, ML tree under the constraint "DBXN inside quadrifid Vg" (constr614.treefile)
-  spider      75 sequences of tree v4 (spider.contree; 27.10), untrimmed MAFFT alignment (31.10: ClipKIT kpic-gappy dropped
-              2 of the 57 CBRs of MvirDBXN, C652 and L1053 - nearly invariant columns with singleton changes; the run on the
-              ClipKIT alignment is kept in analysis/data/asr/spider_clip/). Lepidoptera: all 37 CBRs are in the ClipKIT alignment
-Nodes (MRCA after rooting: Lepidoptera — on the non-noctuoid outgroup Vg (Pyraloidea, Tineidae);
-spiders — midpoint, as in the CBR matrices of Fig. 7):
-  Lepidoptera: DBXN; Vg_quadrifid; Vg_Notodontidae; Vg_Noctuoidea (quadrifid + Notodontidae Vg; in the
-  constrained tree it contains DBXN); DBXN_split (MRCA of DBXN and quadrifid Vg = the duplication);
-  Vg_Noctuoidea_Geometridae
-  Spiders: MvirDBXN lineage (MvirDBXN + Neosparassus ortholog); its parent (split from other Sparassidae Vg);
-  clade A
-Outputs in analysis/data/asr/<run>/: IQ-TREE files, <run>.cbr_nodes.tsv (per node x CBR: MAP residue, its
-posterior, posterior of the reference residue); summary printed and written to <run>.summary.tsv.
-
-Usage (repository root):
-  asr_cbr.py prepare|run|summarise lep_ml|lep_constr|spider [--iqtree PATH] [--threads 8]
-  (`run` = prepare + IQ-TREE + summarise)
+Usage: asr_cbr.py prepare|run|summarise lep_ml|lep_constr|spider [--iqtree PATH] [--threads 8]
 """
 import argparse
 import csv
@@ -42,7 +24,7 @@ RUNS = {
     "lep_constr": dict(aln=f"{G}/lep/lep_set.clip", linsi=f"{G}/lep/lep_set.linsi.aln", tree=f"{G}/lep_au/full614/constr614.treefile",
                        ref="REF|DBXN_reference|spMelPer_pVg1", pos="analysis/data/cbr/positions/MperDBXN_cbr.tsv", col="coordinate",
                        model="JTT+F+I+R10", rename=lambda n: n.replace("|", "__", 1)),
-    # spiders: tree v4 (27.10; v3 without the apolipophorin-like clade C; run on v3 11.10 kept in analysis/data/asr/spider_v3/)
+    # spiders
     "spider": dict(aln=f"{G}/spider_v4/spider_set.linsi.aln", linsi=f"{G}/spider_v4/spider_set.linsi.aln", tree=f"{G}/spider_v4/spider.contree",
                    ref="REF|spider_reference|spMicVir_pVg1", pos="analysis/data/cbr/positions/MvirDBXN_cbr.tsv",
                    col="real_coordinate_plus_10aa", model="JTT+F+I+R4", rename=lambda n: n),

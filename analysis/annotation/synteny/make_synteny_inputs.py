@@ -1,16 +1,8 @@
 #!/usr/bin/env python3
-"""Inputs for halSynteny / HALPER on the revision Cactus alignment.
+"""Inputs for halSynteny from the Cactus alignment of the Vg loci.
 
-Locus sequences in cactus.hal are named <species>.<main|extra>.<contig>:<s>-<e> and hold genome[s-1:e]
-(define_vg_loci.py), so a copy at genomic start..end (1-based, inclusive) sits at locus 0-based
-[start - s, end - s + 1). Six species have more than one locus sequence; every copy keeps its own.
-
-Writes to OUT:
-  mapped_vgs.tsv        new_id (= GeneRax id species__copy), species, seq, genomic coords, locus coords,
-                        classification (broad tree class), class_strict
-  dbxns.txt             new_id of broad-DBXN copies
-  species_order.tsv     HAL leaves in seqfile tree order (C4-b)
-  adjacent_pairs.tsv    tree-neighbour pairs for halSynteny
+Locus sequences are named <species>.<main|extra>.<contig>:<s>-<e> (define_vg_loci.py); copies get 0-based locus
+coordinates. Outputs: mapped_vgs.tsv, dbxns.txt, species_order.tsv, adjacent_pairs.tsv (neighbouring species in tree order)
 """
 
 import argparse

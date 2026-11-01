@@ -1,12 +1,10 @@
 #!/usr/bin/env Rscript
-# Phylogenetic logistic regression of green larval coloration on DBXN copy number (analysis 1 and 4
-# of revision/05_association_methods.md): a grid of samples, phenotype codings, predictors and tree
-# sets; estimates are pooled over the trees of a set with Rubin's rules. alphaT = alpha x tree height:
-# large values (>> 1) mean that residuals carry almost no phylogenetic signal.
+# Phylogenetic logistic regression of green larval coloration on DBXN copy number (phylolm, logistic_MPLE) for several
+# samples, color codings, predictors and tree sets; estimates pooled over the trees of a set (Rubin's rules).
 #
 # Usage: association_phyloglm.R TREESETS.tsv OUT.tsv [BOOT]
-#   TREESETS.tsv: columns set, file (newick, one or many trees; tips = tree_label), main (1 for the primary set)
-#   BOOT: parametric bootstrap replicates for the primary model on the first tree of the main set (default 0)
+#   TREESETS.tsv: set, file (newick; tips = tree_label), main (1 = primary set)
+#   BOOT: parametric bootstrap replicates for the primary model (first tree of the main set; default 0)
 suppressMessages({library(ape); library(phylolm)})
 args <- commandArgs(trailingOnly = TRUE)
 sets <- read.delim(args[1], stringsAsFactors = FALSE)
@@ -18,13 +16,11 @@ rownames(d) <- d$tree_label
 quad <- c("Noctuidae", "Erebidae", "Nolidae")
 d$green        <- c(green = 1L, not_green = 0L)[d$pheno_simple]
 d$green_strict <- c(green = 1L, not_green = 0L)[d$pheno_strict]
-# no hairiness covariate: hair hides the integument colour in at most 1-3 species (author's check of all species, 11.10)
-# CBR predictors (analysis/py/cbr_summary.py): class from the gene tree + score from CBRs, or no classification at all
+# CCR predictors (cbr_summary.py)
 cb <- read.delim("analysis/data/cbr/cbr.lep_species.tsv", stringsAsFactors = FALSE)
 d <- cbind(d, cb[match(d$tree_label, cb$tree_label), c("cbr_sum_DBXN", "n_cbr_65", "n_cbr_70", "n_cbr_75")])
 d$indel        <- grepl("assembly_indel", d$flags)
-# 27.10, Methods option (b): N_DBXN_FROM=<tsv with species, panel_intact_DBXN> replaces n_DBXN by the counts of the
-# panel-only miniprot run (analysis/annotation/compare_panel_only.py); unset = main counts
+# N_DBXN_FROM=<tsv: species, panel_intact_DBXN>: copy counts of the panel-only miniprot run instead of the main ones
 if (nzchar(Sys.getenv("N_DBXN_FROM"))) {
   po <- read.delim(Sys.getenv("N_DBXN_FROM"), stringsAsFactors = FALSE)
   k <- match(d$tree_label, po$species); stopifnot(!any(is.na(k)))

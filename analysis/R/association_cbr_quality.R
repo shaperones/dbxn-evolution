@@ -1,13 +1,11 @@
 #!/usr/bin/env Rscript
-# CBR quality model (13.10; renamed from explore_cbr_quality.R 27.10): does the CBR "quality" of the DBXN copies (similarity to MperDBXN) predict green larvae
-# beyond the number of copies? Quadrifid species WITH DBXN and known colour. Per species: max and mean CBR
-# similarity over intact DBXN copies, all CBRs / bilin CBRs / lutein CBRs. Raw medians by colour, then phyloglm
-# (logistic_MPLE) green ~ n_DBXN + z(score), one model per score, on the main placeholder tree (Grafen; NOT for the paper).
-# Control: the same score for the canonical Vg of the species (vg_all, vg_bilin) should not predict colour.
-# Usage: Rscript analysis/R/association_cbr_quality.R [TREE]  -> printed only
+# CCR similarity of the best DBXN copy as a predictor of green larvae, with copy number in the model (phyloglm), in
+# Erebidae, Nolidae and Noctuidae with DBXNs and known color; the CCR similarity of the species' Vg is the control.
+#
+# Usage: Rscript analysis/R/association_cbr_quality.R [TREE]   (default: mean chronogram of the main dating) -> printed
 suppressMessages({library(ape); library(phylolm)})
 args <- commandArgs(trailingOnly = TRUE)
-tf <- if (length(args)) args[1] else "analysis/results/placeholder_trees/c4_b.grafen.nwk"
+tf <- if (length(args)) args[1] else "analysis/data/mcmctree/lepidoptera/C3_I/chronogram_mean.nwk"
 d <- read.delim("revision/data/lep_species_copies_2026-10-10.tsv", stringsAsFactors = FALSE)
 d <- d[d$family %in% c("Noctuidae", "Erebidae", "Nolidae") & d$pheno_simple %in% c("green", "not_green") & d$n_DBXN > 0, ]
 pc <- read.delim("analysis/data/cbr/cbr.lep_per_copy.tsv", stringsAsFactors = FALSE)

@@ -1,15 +1,8 @@
 #!/usr/bin/env python3
-"""Sample chronograms from an MCMCTree posterior (mcmc.txt) on the fixed topology of FigTree.tre.
+"""Chronograms sampled from an MCMCTree posterior (mcmc.txt) on the fixed topology of FigTree.tre.
 
-MCMCTree stores one row per MCMC sample with the ages of all internal nodes (t_n<k>) but no trees.
-Each t_n column is matched to a FigTree.tre node by its posterior mean (FigTree branch lengths are
-posterior mean times); the match must be one-to-one within --tol, otherwise the script stops. Then
---n rows are drawn at random, ages are put on the nodes and branch length = parent age - child age.
-
-Usage: mcmctree_chronograms.py --dir analysis/data/mcmctree/araneae/A \
-           --mapping analysis/data/mcmctree/araneae/mapping_species.tsv --n 100 --seed 1
-Writes <dir>/chronograms_<n>.nwk (tips = tree_label codes, branch lengths in Ma) and
-<dir>/chronogram_mean.nwk (posterior mean ages).
+Usage: mcmctree_chronograms.py --dir analysis/data/mcmctree/araneae/A --mapping mapping_species.tsv --n 100 --seed 1
+Outputs: <dir>/chronograms_<n>.nwk, <dir>/chronogram_mean.nwk (branch lengths in Ma)
 """
 import argparse
 import csv

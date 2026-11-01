@@ -1,20 +1,11 @@
 #!/usr/bin/env python3
-"""CBR similarity by gene-tree class: per-copy tables, group summaries and species-level CBR predictors.
+"""CCR similarity by gene-tree class: per-copy tables, group summaries and species-level predictors.
 
-Inputs are the outputs of cbr_matrix.py on the alignments before ClipKIT (lep_set.linsi.aln vs MperDBXN,
-spider_set.linsi.aln vs MvirDBXN). Classes come from the gene trees only (CBRs are not used to define them):
-Lepidoptera — lep_classes_broad.tsv (DBXN / Vg, broad and strict DBXN clade); spiders — Vg clades A / B of tree v4
-(27.10: v3 without its clade C, which groups with insect apolipophorins in a tree with the negative references -
-analysis/data/gene_tree/spider_v3_with_negatives/; A holds PpVg3 and MvirDBXN, B PpVg1, PpVg2, PtVg4, PtVg6).
+Inputs: cbr_matrix.py outputs (Lepidoptera vs MperDBXN, spiders vs MvirDBXN); classes from the gene trees only
+(Lepidoptera, lep_classes_broad.tsv; spiders, Vg clades A and B). Species-level predictors (Lepidoptera, intact copies):
+cbr_sum_DBXN, n_cbr_65 / 70 / 75 (copies of any class above the threshold), cbr_max.
 
-Species-level predictors (Lepidoptera, intact copies only), written to <out>.lep_species.tsv:
-  cbr_sum_DBXN     sum of CBR similarity (fraction) over DBXN copies — class from the tree, score from CBRs
-  n_cbr_high       copies of ANY class with CBR similarity >= --threshold (70 %) — no classification at all;
-                   n_cbr_65, n_cbr_70, n_cbr_75 — the same for each threshold (sensitivity)
-  cbr_max          highest CBR similarity among all intact copies
-
-Usage (from the repository root):
-  cbr_summary.py --out analysis/data/cbr/cbr
+Usage: cbr_summary.py --out analysis/data/cbr/cbr
 """
 import argparse
 import csv
@@ -28,7 +19,7 @@ P = dict(
     lep_classes="analysis/data/gene_tree/lep/lep_classes_broad.tsv",
     species="revision/data/lep_species_copies_2026-10-10.tsv",
     sp_scores="analysis/data/cbr/spider_cbr_MvirDBXN.scores.tsv",
-    sp_tree="analysis/data/gene_tree/spider_v4/spider.contree",   # 27.10: v4 = v3 without clade C (apolipophorin-like)
+    sp_tree="analysis/data/gene_tree/spider_v4/spider.contree",
 )
 OUTGROUPS = {"spParPse", "spXysAce", "spAmauFer", "spEraAtri"}
 MVIR = {"REF|spider_reference|spMicVir_pVg1": "MvirDBXN (structure)",
@@ -50,13 +41,11 @@ CLADE_ANCHORS = {  # clade = smallest clade (either side of a branch; the tree i
           "REF|spider_reference|AXN69712.1", "REF|spider_reference|AXN69713.1", "REF|spider_reference|XP_015921257.2",
           "REF|spider_reference|XP_015930207.2", "REF|spider_reference|XP_015930209.2"],
 }
-CLADE_SIZE = {"A": 41, "B": 31}  # tree v4 (as in v3)
+CLADE_SIZE = {"A": 41, "B": 31}
 
 
 def spider_clades(path):
-    """Clades A / B of the spider Vg tree from CLADE_ANCHORS; stops if a size differs from CLADE_SIZE.
-    A rule such as "the smallest clade with all four outgroups" fails here: in clade C a 5-tip subclade
-    already holds all four, and in clade B every outgroup genome has two copies."""
+    """Clades A / B of the spider Vg tree from CLADE_ANCHORS; stops if a clade size differs from CLADE_SIZE."""
     tree = parse(open(path).read())
     tips = {l.name for l in tree.leaves()}
     sides = []
@@ -83,8 +72,6 @@ def summarise(rows, keys):
         for s in SETS:
             v = [float(r[f"{s}_similarity_pct"]) for r in rs]
             rec.update({f"{s}_median": f"{st.median(v):.1f}", f"{s}_min": f"{min(v):.1f}", f"{s}_max": f"{max(v):.1f}"})
-        # 30.10: similarity is already over the CBRs a sequence covers (cbr_matrix.py: missing ends excluded, gaps inside
-        # the span = differences); the former all_nongap_median (every gap excluded) is dropped
         rec.update(all_gap_median=st.median(int(r["all_gap"]) for r in rs),
                    all_missing_median=st.median(int(r["all_missing"]) for r in rs))
         out.append(rec)
@@ -101,7 +88,7 @@ def write(path, rows):
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--threshold", type=float, default=70.0,
-                    help="CBR similarity, %%, for n_cbr_high (70: no intact quadrifid Vg reaches it; decided 11.10)")
+                    help="CCR similarity, %%, for n_cbr_high (no intact Vg of Erebidae, Nolidae and Noctuidae reaches 70)")
     ap.add_argument("--alt-thresholds", type=float, nargs="*", default=[65.0, 75.0], help="sensitivity variants")
     ap.add_argument("--out", required=True)
     a = ap.parse_args()

@@ -1,21 +1,12 @@
 #!/usr/bin/env python3
-"""Vg loci for synteny (Cactus): BUSCO anchors extended to every Vg/DBXN copy on the same contig.
+"""Vg locus of each genome for the whole-locus alignment (Cactus).
 
-The v1 locus was the interval between two M. persicariae BUSCO anchors (9200at7088, 839at7088).
-With the new annotation 10 of 502 tree-classified copies in 6 species lie outside that interval
-on the same chromosome (whole Vg+DBXN arrays shifted by 1-4 Mb), and one DBXN lies on another
-contig. Here the locus = union(anchor interval, all copies on the anchor contig) +- --flank.
-Copies on other contigs get their own small locus (copy span +- --flank) and a flag.
+Locus: the contig with most Vg-family copies, from the BUSCO anchors 9200at7088 and 839at7088 extended to all copies on
+the contig, +- --flank (no anchors on it: the copies only, flag 'no_anchor'). Copies on other contigs form extra loci.
 
-Anchors: BUSCO full_table.tsv per species (Complete or Duplicated; with Duplicated, the copy on
-the contig with most Vg copies is used). If an anchor is missing, the locus is built from the
-copies alone and flagged 'no_anchor' (the v1 workflow rescued 3 such genomes with nested BUSCOs).
-
-Usage:
-  define_vg_loci.py --samples samples.tsv --busco-pattern '/path/{species}/run_lepidoptera_odb10/full_table.tsv' \
-      --copies-dir main/miniprot --classes lep_classes_broad.tsv --out vg_loci [--extract]
---extract writes <out>/<species>.locus.fasta (genome paths from samples.tsv) for Cactus.
-Outputs: <out>/vg_loci.bed, <out>/vg_loci.tsv
+Usage: define_vg_loci.py --samples samples.tsv --busco-pattern '.../{species}/run_lepidoptera_odb10/full_table.tsv'
+       --copies-dir miniprot --classes lep_classes_broad.tsv --out vg_loci [--extract]
+Outputs: vg_loci.tsv, vg_loci.bed; with --extract, <species>.locus.fasta
 """
 import argparse
 import csv

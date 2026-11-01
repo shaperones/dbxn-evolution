@@ -1,25 +1,13 @@
 #!/usr/bin/env Rscript
-# Analysis 3 of revision/05_association_methods.md: events behind the association (quadrifids).
-#  3a. Correlated evolution of green larval coloration and "many DBXN copies" (>= K intact copies; K = 3, the
-#      median among species with DBXN; variants 2 and 4): corHMM::fitCorrelationTest — independent and dependent
-#      models, each with one and two rate classes. Correlation is supported only if a dependent model has a lower
-#      AICc than BOTH independent models (incl. the hidden-rates one).
-#  3b. Stochastic maps (NSIM) on the correlated model (K = 3, first tree of the main set): gains and losses of
-#      green coloration on branches with few / many copies. corHMM states 1-4 = (not green, few), (not green, many),
-#      (green, few), (green, many) — checked against the tip data below; in the maps they are named "green_many"
-#      ("0_0", "0_1", "1_0", "1_1"). Counts are also divided by the time the maps spend in the source state
-#      (rate per unit of tree depth): branches with few copies are much longer in total, so raw counts of gains in
-#      the two backgrounds are not comparable.
-#  3c. Independent losses of DBXN: Dollo parsimony on the species tree (DBXN gained once at the quadrifid crown):
-#      every maximal clade without intact DBXN = one loss; with colour and pseudogene status.
+# Correlated evolution of green coloration and many DBXN copies (>= K intact copies; K = 2, 3, 4), corHMM:
+#  a. the four models of fitCorrelationTest (independent / correlated, one or two rate classes), each fitted from
+#     NSTARTS random starts for every seed in SEEDS; the best fit is kept;
+#  b. stochastic maps on the correlated model of the main tree: gains of green coloration per unit time on branches
+#     with few and many copies;
+#  c. independent losses of DBXN (Dollo parsimony).
 #
 # Usage: association_corhmm.R TREESETS.tsv OUT_PREFIX [NSIM=500] [NSTARTS=10] [SEEDS=1,2,3] [CORES=8]
-#   writes OUT_PREFIX.corr_models.tsv, OUT_PREFIX.simmap_counts.tsv, OUT_PREFIX.dbxn_losses.tsv
-# 25.10: the four models of fitCorrelationTest are fitted here with corHMM(nstarts = NSTARTS) - several random starts,
-# best likelihood kept, and this is repeated for every seed in SEEDS; the best fit over the seeds is used and the
-# number of seeds that reached it (AICc within 0.1) is written as a convergence check (column seeds_at_best). With the
-# single default start the optimum depended on the random stream (AICc of the same model on the same tree differed by
-# up to 13 between runs; with 10 starts still by 3.9 on the main tree; revision/09 §8).
+#   writes OUT_PREFIX.corr_models.tsv, .simmap_counts.tsv, .dbxn_losses.tsv
 suppressMessages({library(ape); library(corHMM)})
 args <- commandArgs(trailingOnly = TRUE)
 sets <- read.delim(args[1], stringsAsFactors = FALSE)
@@ -36,7 +24,7 @@ d$green <- c(green = 1L, not_green = 0L)[d$pheno_simple]
 q <- d[d$family %in% quad & !is.na(d$green), ]
 rownames(q) <- q$tree_label
 
-# ---- 3a -------------------------------------------------------------------------------------------------------
+# ---- a -------------------------------------------------------------------------------------------------------
 corr_test <- function(tr, k) {
   tr <- keep.tip(tr, intersect(tr$tip.label, q$tree_label))
   dat <- data.frame(sp = tr$tip.label, green = q[tr$tip.label, "green"], many = as.integer(q[tr$tip.label, "n_DBXN"] >= k))
@@ -74,7 +62,7 @@ for (i in seq_len(nrow(sets))) {
 }
 write.table(do.call(rbind, rows), paste0(pre, ".corr_models.tsv"), sep = "\t", quote = FALSE, row.names = FALSE)
 
-# ---- 3b -------------------------------------------------------------------------------------------------------
+# ---- b -------------------------------------------------------------------------------------------------------
 m <- keep$fits$correlated_model_fit
 tip_state <- 1 + 2 * keep$dat$green + keep$dat$many                    # 1 = 00, 2 = 01, 3 = 10, 4 = 11
 obs <- apply(m$tip.states, 1, which.max)
@@ -99,7 +87,7 @@ sm <- data.frame(event = names(ev), transition = ev, mean = round(colMeans(cnt),
 write.table(sm, paste0(pre, ".simmap_counts.tsv"), sep = "\t", quote = FALSE, row.names = FALSE)
 print(sm, row.names = FALSE)
 
-# ---- 3c -------------------------------------------------------------------------------------------------------
+# ---- c -------------------------------------------------------------------------------------------------------
 tr <- read.tree(sets$file[sets$main == 1][1]); if (!inherits(tr, "phylo")) tr <- tr[[1]]
 qa <- d[d$family %in% quad, ]; rownames(qa) <- qa$tree_label           # all quadrifids incl. phenotype no_data
 tr <- keep.tip(tr, intersect(tr$tip.label, qa$tree_label))

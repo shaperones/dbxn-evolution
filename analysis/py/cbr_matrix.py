@@ -1,29 +1,16 @@
 #!/usr/bin/env python3
-"""Chromophore-binding residues (CBRs) of a reference DBXN mapped onto every sequence of an alignment.
+"""Chromophore-contact residues (CCRs) of a reference DBXN mapped onto every sequence of an alignment.
 
-For each CBR position of the reference (residues within 5 A of a chromophore in the cryo-EM
-structure) the aligned residue of every sequence is classed as identical, similar (same CLUSTAL
-strong or weak conservation group), different, gap or missing. Sequence classes (DBXN / Vg) are not used.
-30.10 (author's check of the gaps): "missing" = the CBR lies outside the aligned span of the sequence (before its first or
-after its last residue: an incomplete transcript or model), "gap" = a gap inside the span (a deletion). Identity and
-similarity are % of the CBRs the sequence covers (n - missing); a gap inside the span counts as a difference. Before
-30.10 the scores were % of all CBRs (missing ends counted as differences) and the spider plots excluded every gap
-(including the deletion shared by all clade B Vgs).
-30.10: --label-col names the CBRs by another numbering than the one used to find them in the reference: MvirDBXN is
-located by real_coordinate_plus_10aa (the transcript protein has 10 more N-terminal residues) but labelled by the
-numbering of the structure and of the paper (coordinate_from_doc; e.g. H214, N655; the clade B deletion is 1046-1053).
+Each CCR is identical, similar (same Clustal strong or weak group), different, gap (inside the aligned span) or missing
+(outside it). Identity and similarity are % of the CCRs a sequence covers; a gap counts as a difference.
+--label-col names the CCRs by another numbering (MvirDBXN: structure = transcript - 10).
 
 Usage:
   cbr_matrix.py --alignment lep_set.linsi.aln --reference spMelPer_pVg1 \
       --residues ligand_binding_residues1.spMelPer_g4_clipkit_coords.tsv --coord-col coordinate --out lep_cbr
   cbr_matrix.py --alignment spider_set.linsi.aln --reference spMicVir_pVg1 --residues MvirDBXN_cbr.tsv \
       --coord-col real_coordinate_plus_10aa --label-col coordinate_from_doc --out spider_cbr_MvirDBXN
-Outputs:
-  <out>.matrix.tsv   one row per sequence, one column per CBR (e.g. E428), value = aligned residue ("." = missing)
-  <out>.scores.tsv   per sequence: identical / similar / different / gap / missing counts, identity (identical) and
-                     similarity (identical + similar), % of the covered CBRs, for all CBRs and for bilin and lutein contacts
-The script stops listing the CBRs whose letter does not match the reference sequence unless
---allow-mismatch is given (then they are kept at the stated coordinate and reported).
+Outputs: <out>.matrix.tsv, <out>.scores.tsv
 """
 import argparse
 import csv

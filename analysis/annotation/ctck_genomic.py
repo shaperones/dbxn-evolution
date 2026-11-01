@@ -1,17 +1,11 @@
 #!/usr/bin/env python3
-"""Does each Vg/DBXN copy carry a C-terminal cystine knot (CTCK) exon? Checked in the genome.
+"""CTCK exon of each Vg-family copy, searched in the genome.
 
-miniprot proteins end where their template ends. DBXN templates lack CTCK, so a protein-level
-domain scan (InterProScan) would report "no CTCK" for every DBXN copy by construction. Here the
-genome itself is searched: CTCK queries (the C-terminal --tail aa of panel proteins that carry it:
-Lepidoptera canonical Vg, MvirDBXN, spider Vg) are aligned with tblastn to a window from the copy
-start to --downstream bp past its end, stopping before the next copy on the same strand. A hit on
-the copy's strand inside the window = CTCK present.
+The C-terminal --tail residues of CTCK-containing panel proteins are aligned with tblastn to a window from the copy
+start to --downstream bp past its end, not reaching the next copy on the same strand; a hit on the copy's strand = CTCK.
 
-Usage (per genome):
-  ctck_genomic.py --copies SP.miniprot.copies.tsv --genome GENOME.fa --panel seed_panel_v2.faa \
-      --out SP.ctck.tsv
-Needs tblastn in PATH. Output: one row per DBXN / Vg / Vg_spider copy.
+Usage: ctck_genomic.py --copies SP.miniprot.copies.tsv --genome GENOME.fa --panel panel.faa --out SP.ctck.tsv
+Requires tblastn.
 """
 import argparse
 import csv

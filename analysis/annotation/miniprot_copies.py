@@ -1,32 +1,12 @@
 #!/usr/bin/env python3
-"""Locus-level Vg/DBXN copy calling from miniprot alignments (independent of gene models).
+"""Vg-family copies of one genome from miniprot alignments.
 
-Run miniprot with relaxed secondary output so that every copy of a tandem array
-is reported (default --outs=0.99 reports little beyond the best copy per query):
   miniprot -t16 -I -j2 --outs=0.4 -N 50 --outc=0.2 --gff --trans genome.fa templates.faa > SPECIES.mp.gff
 
-Algorithm (one genome):
- 1. Parse every alignment (##PAF + ##STA + mRNA/CDS lines).
- 2. Split alignments at introns longer than --max-intron: such an "intron" is
-    usually a neighbouring copy that the alignment jumped over.
- 3. Greedy clustering by score: the best remaining alignment founds a copy;
-    an alignment joins a copy if its CDS overlaps the founder's CDS by
-    >= --min-overlap of the shorter one. An alignment overlapping two copies
-    is a bridge and is ignored.
- 4. Class of a copy = class of its best-scoring template (competitive:
-    DBXN vs Vg vs Vg_spider vs negative); margin to the best other class is
-    reported. This is a provisional class; the final one comes from the gene tree.
- 5. Adjacent partial copies of the same class whose template ranges are
-    complementary (a copy broken by an assembly gap or a very long intron)
-    are joined.
- 6. intact = some same-class alignment covers >= --intact-cov of its template
-    with no frameshift and no in-frame stop.
-
-Outputs: <prefix>.copies.tsv, <prefix>.copies.faa (best translation per copy),
-         <prefix>.counts.tsv (per-class counts, common format for compare_counts.py),
-         <prefix>.copies.gff3 (25.10: one gene / mRNA / CDS model per copy, from the same alignment as the protein in
-         .copies.faa - the intact alignment, else the best-scoring one of the copy's class, else the founder; for the
-         data archive, CDS FASTA with gffread -x and intron statistics).
+Alignments are split at long introns and clustered into copies by CDS overlap (best score first); partial copies with
+complementary template ranges are joined. A copy is classed by its best template and is intact if one alignment covers
+>= --intact-cov of its template without frameshifts or stop codons.
+Outputs: <prefix>.copies.tsv, .copies.faa, .counts.tsv, .copies.gff3
 """
 import argparse
 import csv

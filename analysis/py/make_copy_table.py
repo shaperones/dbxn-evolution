@@ -1,25 +1,11 @@
 #!/usr/bin/env python3
-"""Species x Vg/DBXN copies table for the association analysis (Lepidoptera, 194 genomes).
+"""Species x Vg-family copies table for the association analysis (194 lepidopteran genomes).
 
-Sources: miniprot copy tables (all loci, intact or not), gene-tree classes of intact copies
-(broad and strict DBXN clade), genomic CTCK, phenotypes, Vg locus flags, HALPER components.
-Counts per species:
-  n_DBXN / n_DBXN_strict / n_Vg   intact copies by gene-tree class (the copies in the gene tree)
-  n_DBXN_dedup                    n_DBXN after collapsing near-identical intact copies (see below)
-  n_DBXN_pseudo / n_Vg_pseudo     loci that are not intact (class by best template)
-  n_DBXN_fullsize                 DBXN loci covering >= 80 % of the template, intact or not
-  n_DBXN_ctck                     intact DBXN copies with a genomic CTCK (expected 0)
-  n_neg / n_neg_broken            negative-control genes (apoLp, MTP, cv-d) found / not intact
-Flags:
-  identical_pair    >= 1 pair of intact same-class copies with >= --ident protein identity over
-                    >= 90 % of the shorter copy (assembly duplication or very recent duplication)
-  assembly_indel    >= 2 broken negative-control genes or a broken canonical Vg with no intact Vg:
-                    frameshifts are likely assembly errors, so intactness is unreliable
-  locus:<flag>      flag of the Vg locus definition (copies outside the BUSCO anchors, etc.)
+Columns: n_DBXN, n_DBXN_strict, n_Vg (intact copies by gene-tree class); n_DBXN_dedup (near-identical copies merged);
+n_DBXN_pseudo, n_Vg_pseudo (disrupted loci); n_DBXN_fullsize (>= 80% of the template, intact or not); n_DBXN_ctck,
+n_Vg_ctck; n_neg, n_neg_broken (negative-reference genes); flags identical_pair, assembly_indel, locus:<flag>.
 
-Usage: make_copy_table.py --out revision/data/lep_species_copies.tsv   (needs blastp, makeblastdb)
-       make_copy_table.py --out revision/data/lep_species_copies_2026-10-10.tsv --refresh-pheno
-           only copies pheno_simple / pheno_3level / pheno_strict from the color table into the existing table (27.10)
+Usage: make_copy_table.py --out lep_species_copies.tsv   (requires blastp, makeblastdb)
 """
 import argparse
 import csv
@@ -30,7 +16,7 @@ from collections import Counter, defaultdict
 
 P = dict(
     species="revision/data/lepidoptera_species_v2.tsv",
-    pheno="revision/data/lepidoptera_larval_color.tsv",   # 27.10: the single source of larval color (build_color_table.py)
+    pheno="revision/data/lepidoptera_larval_color.tsv",  # larval color
     copies="analysis/data/miniprot",
     classes="analysis/data/gene_tree/lep/lep_classes_broad.tsv",
     ctck="analysis/data/ctck/all.ctck.tsv",

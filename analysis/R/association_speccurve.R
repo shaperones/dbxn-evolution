@@ -1,14 +1,8 @@
 #!/usr/bin/env Rscript
-# Specification curve for Fig. 8c (decided 12.10): one predictor type — the number of DBXN copies per genome, effect =
-# odds ratio of green larvae per copy — refitted for every combination of the analytic choices:
-#   sample (5) x colour coding (2) x what counts as a DBXN copy (7) x species tree (tree sets) x estimator (3).
-# Choices that change the scale of the effect (log2 copies, >= 3 copies, summed CBR similarity) are not in the curve
-# (they stay in association_phyloglm.R); the canonical Vg control is in Fig. 8b; leave-one-subfamily-out comes from
-# association_phyloglm.R (main model) and is drawn next to the curve.
-# One tree per set (the first): Rubin pooling over many trees stays in association_phyloglm.R.
+# Specification curve: odds ratio of green larvae per DBXN copy for every combination of sample (5), color coding (2),
+# copy definition (7), dated tree (first tree of each set) and estimator (3).
 #
 # Usage: association_speccurve.R TREESETS.tsv OUT.tsv [CORES]
-#   TREESETS.tsv: columns set, file, main (as for association_phyloglm.R)
 suppressMessages({library(ape); library(phylolm); library(parallel)})
 args  <- commandArgs(trailingOnly = TRUE)
 sets  <- read.delim(args[1], stringsAsFactors = FALSE)
