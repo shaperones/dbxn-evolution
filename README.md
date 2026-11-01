@@ -1,7 +1,7 @@
 # DBXN evolution — analysis code
 
-Code for the evolutionary analyses of *Cryo-EM structures of spider and insect vitellogenin suggest their independent
-neofunctionalization in green camouflage evolution* (Nature Communications, in revision). Data: [Zenodo DOI].
+Code for the evolutionary analyses of vitellogenin-derived pigments (dibilinoxanthinins, DBXNs) in Lepidoptera and spiders.
+Data: [Zenodo DOI].
 
 ## Environment
 
