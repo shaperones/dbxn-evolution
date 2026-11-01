@@ -1,0 +1,16 @@
+# Tools for the Vg/DBXN annotation container (versions = those used in the local tests, 07.10.2026)
+name: base
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - python=3.12
+  - perl
+  - openjdk=11        # GeMoMa 1.7.1 GAF needs Nashorn (removed in Java 15+)
+  - blast=2.17.0
+  - hmmer=3.4
+  - miniprot=0.18
+  - mafft=7.526
+  - git
+  - unzip
+  - procps-ng

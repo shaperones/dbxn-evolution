@@ -1,0 +1,57 @@
+# Local plotting/statistics environment (macOS arm64; the same file installs on Linux).
+# Create:  micromamba create -f analysis/env/vg-local.yml
+name: vg-local
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  # R: comparative methods (phylolm, corHMM, geiger, castor: not on conda-forge osx-arm64,
+  # installed from CRAN source by analysis/env/install_cran.R)
+  - compilers
+  - make
+  - r-rcpp
+  - r-rcpparmadillo
+  - r-nloptr
+  - r-gensa
+  - r-expm
+  - r-desolve
+  - r-mvtnorm
+  - r-coda
+  - r-future.apply
+  - r-igraph
+  - r-viridis
+  - r-rcppeigen
+  - r-rmpfr
+  - r-gmp
+  - r-base=4.4
+  - r-ape
+  - r-phytools
+  - r-phangorn
+  - r-mcmcglmm
+  # R: data and plotting
+  - r-tidyverse
+  - r-patchwork
+  - r-svglite
+  - r-ggrepel
+  - r-ggnewscale
+  - r-optparse
+  - bioconductor-treeio
+  - bioconductor-ggtree
+  - bioconductor-ggtreeextra
+  - r-irkernel
+  # Python
+  - python=3.12
+  - pandas
+  - numpy
+  - scipy
+  - matplotlib
+  - seaborn
+  - biopython
+  - dendropy
+  - toytree
+  - jupyterlab
+  - pip
+  - pip:
+      - cnsplots==0.8.0   # journal-style matplotlib defaults for the figures
+      - pypdf
+      - svgutils==0.3.4     # composition of the page figures (analysis/py/compose_figures.py)
